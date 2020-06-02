@@ -1,0 +1,24 @@
+{
+  "expo": {
+   "name": "Artora",
+   "icon": "./assets/icon.png",
+   "version": "1.0.0",
+   "slug": "artora-app-beta",
+   "ios": {
+     "bundleIdentifier": "com.artora.artorabeta",
+     "buildNumber": "1.0.0"
+   },
+   "android": {
+     "package": "com.artora.artorabeta",
+     "versionCode": 1,
+     "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyDFfid__0a2keZ-q3dHpujpoqO9MyOgUL0"
+        }
+      }
+   },
+   "assetBundlePatterns": [
+    "./node_modules/@expo/vector-icons/**/*"
+    ]
+  }
+}
