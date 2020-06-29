@@ -2,14 +2,15 @@ import React from 'react';
 import { StyleSheet } from 'react-native';
 import { Header, Right, Left, Body, Title, Icon } from 'native-base';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import { ThemeContext } from '../../../../../App';
+import useTheme from '../../../../common/theme/use-theme';
 
 function ProductListHeader({navigation, title}) {
-    const theme = React.useContext(ThemeContext)
-    const roundedIconContainerStyle = {...styles.roundedIconContainer, backgroundColor:theme.backgroundPrimary }
+    const { colors, barStyle } = useTheme()
+
+    const roundedIconContainerStyle = {...styles.roundedIconContainer, backgroundColor:colors.backgroundPrimary }
 
     return (
-        <Header noShadow style={styles.root} iosBarStyle={theme.name==="light"?"dark-content":"light-content"}>
+        <Header noShadow style={styles.root} iosBarStyle={barStyle}>
             <Left>
                 <TouchableOpacity onPress={navigation.goBack} style={roundedIconContainerStyle}>
                     <Icon  type="Entypo" name="chevron-left"/>

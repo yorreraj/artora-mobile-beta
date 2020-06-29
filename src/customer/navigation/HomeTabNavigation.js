@@ -7,8 +7,7 @@ import CategorieScreen from '../screens/categorie/CategorieScreen';
 import ShopListScreen from '../screens/shop/ShopListScreen';
 import FavorisScreen from '../screens/favoris/FavorisScreen';
 import HomeHeader from '../screens/home/components/HomeHeader';
-import { ThemeContext } from '../../../App';
-import { StatusBar } from 'react-native';
+import useTheme from '../../common/theme/use-theme';
 
 const Tab = createBottomTabNavigator()
 
@@ -36,7 +35,7 @@ const tabScreens = [
 ]
 
 function HomeTabNavigation(props) {
-    const theme = React.useContext(ThemeContext)
+    const { colors } = useTheme()
     
     return (
         <Container>
@@ -45,8 +44,8 @@ function HomeTabNavigation(props) {
                 tabBar={props=>(
                     <TabBar
                         activeColors={"#FFFFFF"}
-                        activeTabBackgrounds={theme.primary}
-                        tabBarBackground={theme.backgroundSecondary}
+                        activeTabBackgrounds={colors.primary}
+                        tabBarBackground={colors.backgroundSecondary}
                         {...props}
                     />
                 )}
@@ -63,7 +62,7 @@ function HomeTabNavigation(props) {
                                         type="Feather"
                                         name={icon_name}
                                         style={{
-                                            color:focused?color:theme.textLight,
+                                            color:focused?color:colors.textLight,
                                             fontSize:size?size:20
                                         }}
                                     />

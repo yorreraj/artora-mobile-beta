@@ -2,12 +2,12 @@ import React from 'react';
 import {StyleSheet} from 'react-native';
 import {View, Text, Icon, Button, Spinner} from 'native-base';
 import { FlatList } from 'react-native-gesture-handler';
-import { ThemeContext } from '../../../../App';
 import AnimatedItem from '../../../common/components/animations/AnimatedItem';
 import InTheNewsContainer from './components/InTheNewsContainer';
 import PromotionContainer from './components/PromotionContainer';
 import RecomandedContainer from './components/RecomandedContainer';
 import NewArrivalContainer from './components/NewArrivalContainer';
+import useTheme from '../../../common/theme/use-theme';
 
 const SECTIONS = [
     {
@@ -33,8 +33,8 @@ const SECTIONS = [
 ]
 
 function HomeScreen({navigation}) {
+    const { colors } = useTheme()
     const [sections, setSections] = React.useState(null)
-    const theme = React.useContext(ThemeContext)
 
     const handlePressTitle = (id) => {
         navigation.navigate("ProductList", {sectionId:id})
@@ -45,7 +45,7 @@ function HomeScreen({navigation}) {
     },[])
 
     return (
-        <View style={{...styles.root, backgroundColor:theme.backgroundPrimary}}>
+        <View style={{...styles.root, backgroundColor:colors.backgroundPrimary}}>
             {
                 (sections)?(
                     <FlatList

@@ -1,15 +1,17 @@
 import React from 'react';
 import { StyleSheet } from 'react-native';
 import { View, Container, Content, Button, Text, Icon, Spinner } from 'native-base';
-import { FlatList } from 'react-native-gesture-handler';
-import { ThemeContext } from '../../../../App';
+import { FlatList, ScrollView } from 'react-native-gesture-handler';
 import ShopHeader from './components/ShopHeader';
 import RecomandedContainer from './components/sections/RecomandedContainer';
 import PromotionContainer from './components/sections/PromotionContainer';
 import NewArrivalContainer from './components/sections/NewArrivalContainer';
 import CategorieContainer from './components/sections/CategorieContainer';
 import AnimatedItem from './components/AnimatedItem';
-
+import useTheme from '../../../common/theme/use-theme';
+import { useQuery } from '@apollo/react-hooks';
+import { QUERY_SHOP_PRODUCT } from '../../../graphql/queries/query-shop-product';
+ 
 const SECTIONS = [
     {
         id:"promotions",
@@ -29,43 +31,53 @@ const SECTIONS = [
 ]
 
 function ShopScreen(props) {
-    const theme = React.useContext(ThemeContext)
-    const [sections, setSections] = React.useState(null)
+    const { colors } = useTheme()
+    const { data, loading } = useQuery(QUERY_SHOP_PRODUCT, { fetchPolicy:"cache-and-network", variables:{shopId:"shop-O-7mx5NOy"}})
 
-    React.useEffect(()=>{
-        setSections(SECTIONS)
-    },[])
+    const newArrivalSelector = () => data.newProductsFromShop.map(({id, name, prices, pictures}) => ({
+        id,
+        name,
+        price:prices.filter(({isMain}) => isMain)[0].amount,
+        imageUri:pictures.filter(({isMain}) => isMain)[0].uri
+    }))
 
     return (
-        <Container style={{backgroundColor:theme.backgroundPrimary}}>
+        <Container style={{backgroundColor:colors.backgroundPrimary}}>
             <ShopHeader {...props}/>
             <View style={{flex:1, alignItems:"center", justifyContent:"center"}}>
                 {
-                    (sections)?(
-                        <FlatList
-                            showsVerticalScrollIndicator={false}
-                            data={sections}
-                            renderItem={({item, index})=>(
-                                <AnimatedItem index={index}>
-                                    <Button iconRight transparent style={styles.buttonTitle}>
-                                        <Text>{item.name}</Text>
-                                        <Icon type="Entypo" name="chevron-right" />
-                                    </Button>
-                                    <item.Section/>
-                                </AnimatedItem>
-                            )}
-                            keyExtractor={item => `shop-${item.id}`}
-                            ListFooterComponent={
-                                <View style={{paddingTop:10, paddingBottom:20}}>
-                                    <View style={{padding:10, backgroundColor:"#FF7002",marginHorizontal:10,borderRadius:5}}>
-                                        <Text style={{color:"white"}}>Nos produits par categorie</Text>
-                                    </View>
-                                    <CategorieContainer/>
+                    (!loading)?(
+                        <ScrollView>
+                            {/* <AnimatedItem>
+                                <Button iconRight transparent style={styles.buttonTitle}>
+                                    <Text>Promotions</Text>
+                                    <Icon type="Entypo" name="chevron-right" />
+                                </Button>
+                                <PromotionContainer/>
+                            </AnimatedItem> */}
+                            <AnimatedItem>
+                                <Button iconRight transparent style={styles.buttonTitle}>
+                                    <Text>Nouveautés</Text>
+                                    <Icon type="Entypo" name="chevron-right" />
+                                </Button>
+                                <NewArrivalContainer {...props} products={newArrivalSelector()}/>
+                            </AnimatedItem>
+                            {/* <AnimatedItem>
+                                <Button iconRight transparent style={styles.buttonTitle}>
+                                    <Text>Pour vous</Text>
+                                    <Icon type="Entypo" name="chevron-right" />
+                                </Button>
+                                <RecomandedContainer/>
+                            </AnimatedItem> */}
+                            <View style={{paddingTop:10, paddingBottom:20}}>
+                                <View style={{padding:10, backgroundColor:"#FF7002",marginHorizontal:10,borderRadius:5}}>
+                                    <Text style={{color:"white"}}>Nos produits par categorie</Text>
                                 </View>
-                            }
-                        />
+                                <CategorieContainer/>
+                            </View>
+                        </ScrollView>
                     ):(
-                        <Spinner />
+                        <Spinner/>
                     )
                 }
             </View>

@@ -3,12 +3,12 @@ import { StyleSheet } from 'react-native';
 import { View, List, ListItem, Text } from 'native-base';
 import { FontAwesome } from '@expo/vector-icons'; 
 import {ASUS_ZEN_BOOK_CONFIG} from '../../../../../common/fake-data';
-import { ThemeContext } from '../../../../../../App';
+import useTheme from '../../../../../common/theme/use-theme';
 
-const colors = ["#000000", "#DD4500", "#F0F0F0"]
+const productColors = ["#000000", "#DD4500", "#F0F0F0"]
 
 function ProductDescriptionContainer(props) {
-    const theme = React.useContext(ThemeContext)
+    const { colors } = useTheme()
 
     return (
         <List>
@@ -17,7 +17,7 @@ function ProductDescriptionContainer(props) {
                     <Text style={[styles.text, styles.textTitle]}>Couleurs</Text>
                     <View style={{flexDirection:"row"}}>
                         {
-                            colors.map((color, index)=>(
+                            productColors.map((color, index)=>(
                                 <FontAwesome 
                                     key={`product-color-${index}`} 
                                     name="square" 
@@ -35,7 +35,7 @@ function ProductDescriptionContainer(props) {
                     <ListItem key={`product-description-${index}`} style={styles.listItem}>
                         <View>
                             <Text style={styles.textTitle}>{item}</Text>
-                            <Text style={{...styles.textContent, color:theme.textLight}}>{content}</Text>
+                            <Text style={{...styles.textContent, color:colors.textLight}}>{content}</Text>
                         </View>
                     </ListItem>
                 ))

@@ -1,14 +1,22 @@
 import React from 'react';
-import {StyleSheet, StatusBar} from 'react-native';
+import {StyleSheet} from 'react-native';
 import {View, Header, Left, Body, Right, Icon, H3, Title} from 'native-base';
 import CustomBadge from '../../../../common/components/CustomBadge';
-import { ThemeContext } from '../../../../../App';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import { useMutation } from '@apollo/react-hooks';
+import useTheme from '../../../../common/theme/use-theme';
+import { MUTATION_SWITCH_THEME } from '../../../../graphql/mutations/mutation-switch-theme';
 
 function HomeHeader(props) {
-    const theme = React.useContext(ThemeContext);
+    const { colors, barStyle } = useTheme()
+
+    const [ switchTheme ] = useMutation(
+        MUTATION_SWITCH_THEME,
+        { variables: { theme: 'light' } }
+    )
 
     return (
-       <Header noShadow style={styles.root} iosBarStyle={theme.name==="light"?"dark-content":"light-content"}>
+       <Header noShadow style={styles.root} iosBarStyle={barStyle}>
             <Left>
                 <Icon type="MaterialIcons"  name='sort' style={styles.leftIcon} />
             </Left>
@@ -16,10 +24,12 @@ function HomeHeader(props) {
                 <Title style={styles.title}>Artora</Title>
             </Body>
             <Right>
-                <View style={{...styles.roundedIconContainer, backgroundColor:theme.backgroundPrimary}}>
-                  <Icon type="Octicons" name='search' style={styles.rightIcon}/>
-                </View>
-                <View style={{...styles.roundedIconContainer, backgroundColor:theme.backgroundPrimary}}>
+                <TouchableOpacity onPress={switchTheme}>
+                    <View style={{...styles.roundedIconContainer, backgroundColor:colors.backgroundPrimary}}>
+                        <Icon type="Octicons" name='search' style={styles.rightIcon}/>
+                    </View>
+                </TouchableOpacity>
+                <View style={{...styles.roundedIconContainer, backgroundColor:colors.backgroundPrimary}}>
                   <Icon type="Octicons" name='bell' style={styles.rightIcon}/>
                   <CustomBadge
                     rootStyle={styles.badge}

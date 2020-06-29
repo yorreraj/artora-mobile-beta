@@ -1,11 +1,11 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import {StyleSheet, FlatList} from 'react-native';
 import {Text} from 'native-base';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import { ThemeContext } from '../../../../../../App';
+import useTheme from '../../../../../common/theme/use-theme';
 
 function MenuCategorie({categories, activeMenuId, onPressMenu}) {
-    const theme = useContext(ThemeContext);
+    const { colors } = useTheme()
 
     const handlePressMenu = (item) => {
         if(onPressMenu)
@@ -24,14 +24,14 @@ function MenuCategorie({categories, activeMenuId, onPressMenu}) {
                     onPress={()=>handlePressMenu(item)}
                     style={[
                         styles.menuItem, 
-                        { borderColor:theme.textLight},
+                        { borderColor:colors.textLight},
                         (item.id===activeMenuId)?styles.menuItemActive:{}
                     ]}
                 >
                     <Text 
                         style={[
                             styles.menuText,
-                            {color:theme.textLight},
+                            {color:colors.textLight},
                             (item.id===activeMenuId)?styles.menuTextActive:{}
                         ]}
                     >

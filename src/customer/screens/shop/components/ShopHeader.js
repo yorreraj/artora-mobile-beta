@@ -1,15 +1,14 @@
 import React from 'react';
-import {StatusBar} from 'react-native';
 import { StyleSheet, TouchableOpacity } from 'react-native';
 import { Header, Left, Body, Title, Right, Icon } from 'native-base';
-import { ThemeContext } from '../../../../../App';
+import useTheme from '../../../../common/theme/use-theme';
 
 function ShopHeader(props) {
-    const theme = React.useContext(ThemeContext);
-    const roundedIconContainerStyle = {...styles.roundedIconContainer, backgroundColor:theme.backgroundPrimary};
+    const { colors, barStyle } = useTheme()
+    const roundedIconContainerStyle = {...styles.roundedIconContainer, backgroundColor:colors.backgroundPrimary};
 
     return (
-        <Header noShadow style={styles.root} iosBarStyle={theme.name==="light"?"dark-content":"light-content"}>
+        <Header noShadow style={styles.root} iosBarStyle={barStyle}>
             <Left>
                 <TouchableOpacity onPress={props.navigation.goBack} style={roundedIconContainerStyle}>
                     <Icon  type="Entypo" name="chevron-left"/>

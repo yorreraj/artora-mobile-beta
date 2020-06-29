@@ -1,15 +1,14 @@
 import React from 'react';
-import {Modal, TouchableOpacity, StyleSheet, Animated, Easing} from 'react-native';
+import {Modal, TouchableOpacity, StyleSheet, Animated} from 'react-native';
 import {View, Text, Button} from 'native-base'; 
 import { FlatList } from 'react-native-gesture-handler';
-import { ThemeContext } from '../../../../App';
-import ToggleAnimationView from '../../../common/components/animations/ToggleAnimationView';
 import CategorieItem from './components/CategorieItem';
 import {CATEGORIES} from '../../../common/fake-data';
+import useTheme from '../../../common/theme/use-theme';
 
 
 function CategorieScreen({navigation}) {
-    const theme = React.useContext(ThemeContext)
+    const { colors } = useTheme()
     const [selectedFamilleCategorie, setSelectedFamilleCategorie] = React.useState(null)
     const animationValue = React.useState(new Animated.Value(100))[0]
 
@@ -34,7 +33,7 @@ function CategorieScreen({navigation}) {
     }
 
     return (
-        <View style={{ flex:1, backgroundColor:theme.backgroundPrimary}}>
+        <View style={{ flex:1, backgroundColor:colors.backgroundPrimary}}>
             <Modal
                 animationType="fade"
                 transparent={true}
@@ -50,7 +49,7 @@ function CategorieScreen({navigation}) {
                                 <Animated.View 
                                     style={[
                                         styles.modaleMenuContainer, 
-                                        {backgroundColor:theme.backgroundPrimary},
+                                        {backgroundColor:colors.backgroundPrimary},
                                         {
                                             top:animationValue.interpolate({
                                                 inputRange:[0,100],
@@ -66,7 +65,7 @@ function CategorieScreen({navigation}) {
                                                 onPress={()=>handlePressCategorie(categorie)} 
                                                 key={categorie.id} 
                                                 transparent 
-                                                style={{...styles.buttonMenu, backgroundColor:theme.backgroundSecondary}}
+                                                style={{...styles.buttonMenu, backgroundColor:colors.backgroundSecondary}}
                                             >
                                                 <Text style={styles.buttonMenuText}>{categorie.title}</Text>
                                             </Button>

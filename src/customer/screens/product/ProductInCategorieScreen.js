@@ -8,23 +8,17 @@ import {PRODUCTS} from '../../../common/fake-data';
 import ProductListHeader from './components/ProductListHeader';
 import MenuCategorie from './components/product-in-categorie/MenuCategorie';
 import AnimatedItem from '../../../common/components/animations/AnimatedItem';
-import { ThemeContext } from '../../../../App';
+import useTheme from '../../../common/theme/use-theme';
 
 const products = PRODUCTS.map(item=>({
     ...item,
     uri:item.imageUri
 }))
 
-const headerAnimConfig = {
-    visibleValue:0,
-    hideValue:-100,
-    propertyToAnimate:"top"
-}
-
 let prevOffset = 0;
 
 function ProductInCategorieScreen(props) {
-    const theme = React.useContext(ThemeContext)
+    const { colors } = useTheme()
     const [hideNavigation, setHidenavigation] = React.useState(false);
     const [activeMenuId, setActiveMenuId] = React.useState("tous-categories");
     const [selectedCategorie, setSelectedCategorie] = React.useState(null);
@@ -58,18 +52,18 @@ function ProductInCategorieScreen(props) {
     },[])
 
     return (
-        <Container style={{flex:1, backgroundColor:theme.backgroundPrimary}}>
+        <Container style={{flex:1, backgroundColor:colors.backgroundPrimary}}>
             {
                 (selectedCategorie)&&
                 <>
                     {
-                        <Animated.View style={[styles.headerContainer, {backgroundColor:theme.backgroundSecondary},  {top:animValue}]}>
+                        <Animated.View style={[styles.headerContainer, {backgroundColor:colors.backgroundSecondary},  {top:animValue}]}>
                             <ProductListHeader {...props}/>
                             <View style={{marginLeft:15}}>
                                 <Text style={{fontWeight:"bold"}}>{selectedCategorie.famille.title}</Text>
                                 <View style={{flexDirection:"row"}}>
-                                    <Text style={{color:theme.textLight, fontSize:14, marginRight:5}}>{selectedCategorie.categorie.title}</Text>
-                                    <Text style={{color:theme.primary, fontSize:14, fontWeight:"bold"}}>(200)</Text>
+                                    <Text style={{color:colors.textLight, fontSize:14, marginRight:5}}>{selectedCategorie.categorie.title}</Text>
+                                    <Text style={{color:colors.primary, fontSize:14, fontWeight:"bold"}}>(200)</Text>
                                 </View>
                             </View>
                             <MenuCategorie 
@@ -97,7 +91,7 @@ function ProductInCategorieScreen(props) {
                                 prevOffset =currentOffset;
                             },
                             style:{
-                                backgroundColor:theme.backgroundPrimary,
+                                backgroundColor:colors.backgroundPrimary,
                                 alignSelf:"center"
                             }
                         }}

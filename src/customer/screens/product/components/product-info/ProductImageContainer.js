@@ -21,14 +21,18 @@ const IMAGES_THUMB_URI = [
 ]
 
 
-function ProductImageContainer(props) {
+function ProductImageContainer({pictures, youtubeVideoId}) {
     const [activePreviewImageIndex, setActivePreviewImageIndex] = React.useState(-1)
     const [showModalVideo, setShowModalVideo] = React.useState(false)
+    const thumbnails = [
+        { format:"video", uri:`https://img.youtube.com/vi/${youtubeVideoId}/mqdefault.jpg` },
+        ...pictures.map(uri => ({ format:"image", uri }))
+    ]
 
 
     const handlePressItem = (item) => {
         if(item.format !== "video"){
-            setActivePreviewImageIndex(ASUS_ZEN_BOOK.indexOf(item.uri))
+            setActivePreviewImageIndex(pictures.indexOf(item.uri))
         }else{
             setShowModalVideo(true);
         }
@@ -37,7 +41,7 @@ function ProductImageContainer(props) {
     const renderItem = (item) => (
         <TouchableOpacity 
             activeOpacity={0.6}
-            onPress={()=>handlePressItem(item)} 
+            onPress={()=>handlePressItem(item)}
             style={styles.root}
         >
             <Image style={styles.image} source={{uri:item.uri}}/>
@@ -60,7 +64,7 @@ function ProductImageContainer(props) {
     return (
         <View>
             <Carousel
-                data={IMAGES_THUMB_URI}
+                data={thumbnails}
                 renderItem={({item})=>renderItem(item)}
                 sliderWidth={SCREEN_SIZE.width}
                 itemWidth={IMAGE_WIDTH}
@@ -76,7 +80,7 @@ function ProductImageContainer(props) {
             >
                 <ImageViewer 
                     enableSwipeDown
-                    imageUrls={ASUS_ZEN_BOOK.map(url=>({url}))}
+                    imageUrls={pictures.map(url=>({url}))}
                     index={activePreviewImageIndex}
                     onSwipeDown={()=>setActivePreviewImageIndex(-1)}
                     onRequestClose={()=>setActivePreviewImageIndex(-1)}

@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {StyleSheet, Image} from 'react-native';
+import FastImage from 'react-native-fast-image';
 import {View, Text} from 'native-base';
 import {LinearGradient} from 'expo-linear-gradient';
 

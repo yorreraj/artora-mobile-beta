@@ -1,16 +1,16 @@
 import React from 'react';
 import {StyleSheet} from 'react-native';
-import { Header, Left, Body, Icon, Title, Right } from 'native-base';
+import { Header, Left, Icon, Right } from 'native-base';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import { ThemeContext } from '../../../../../../App';
+import useTheme from '../../../../../common/theme/use-theme';
 
 function ProductDetailHeader({navigation}) {
-    const theme = React.useContext(ThemeContext)
+    const { colors, barStyle } = useTheme()
     const [favoris, setFavoris] = React.useState(false);
-    const roundedIconContainerStyle = {...styles.roundedIconContainer, backgroundColor:theme.backgroundPrimary}
+    const roundedIconContainerStyle = {...styles.roundedIconContainer, backgroundColor:colors.backgroundPrimary}
 
     return (
-        <Header noShadow style={styles.root} iosBarStyle={theme.name==="light"?"dark-content":"light-content"}>
+        <Header noShadow style={styles.root} iosBarStyle={barStyle}>
             <Left>
                 <TouchableOpacity onPress={navigation.goBack} style={roundedIconContainerStyle}>
                     <Icon  type="Entypo" name="chevron-left"/>
