@@ -1,4 +1,4 @@
-import { useMutation } from "@apollo/react-hooks"
+import { useMutation, useApolloClient } from "@apollo/react-hooks"
 import { MUTATION_CREATE_USER } from "../mutations/mutation-create-user";
 import { useState } from "react";
 
@@ -28,8 +28,32 @@ const checkInputData = (data) => {
 }
 
 export const useCreateUser = (data, onCompleted ) => {
-    const [create, { loading }] = useMutation(MUTATION_CREATE_USER, { onCompleted })
     const [errors, setErrors] = useState({})
+    const client = useApolloClient()
+    const [create, { loading }] = useMutation(MUTATION_CREATE_USER, { 
+            onCompleted: (data) => handleOnCompleted(data),
+            onError: error => {
+                const errorCode = error.graphQLErrors[0].extensions.code
+                switch(errorCode){
+                    case "MAIL_EXISTS":
+                        setErrors({login:"L'adresse mail est déjà utilisée."})
+                    break
+                    case "PHONE_EXISTS":
+                        setErrors({login:"Le numéro mobile est déjà utilisé."})
+                    break
+                }
+            }
+    })
+
+    const handleOnCompleted = (data) => {
+        client.writeData({data:{
+            connectedUser:{
+                user:data.createUser,
+                __typename:"ConnectedUser"
+            }
+        }})
+        onCompleted()
+    }
 
     const handleCreate = () => {
         const { name, login, password } = data
@@ -48,5 +72,11 @@ export const useCreateUser = (data, onCompleted ) => {
             })
     }
 
-    return [handleCreate, { errors, loading }]
+    const removeError = (name) => {
+        let newErrors = {...errors}
+        delete newErrors[name]
+        setErrors(newErrors)
+    }
+
+    return [handleCreate, { errors, removeError, loading }]
 }

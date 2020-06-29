@@ -20,7 +20,7 @@ function AppNavigation(props) {
 
     return (
         <StyleProvider style={theme}>
-            <Stack.Navigator initialRouteName="SignUp">
+            <Stack.Navigator initialRouteName="Preference">
                 <Stack.Screen name="Login" component={LoginScreen} options={{headerShown:false}}/>
                 <Stack.Screen name="Home" component={HomeTabNavigation} options={{headerShown:false}}/>
                 <Stack.Screen name="ProductList" component={ProductListScreen} options={{headerShown:false}}/>

@@ -1,11 +1,14 @@
 import React, { useState, useRef } from 'react';
-import { Container, View, Header, Left, Icon, Right, Text, Footer, Button, Body, H1 } from 'native-base';
+import { Container, View, Header, Left, Icon, Right, Text, Footer, Button, Body, H1, Title } from 'native-base';
 import { StyleSheet, TouchableOpacity, StatusBar, BackHandler } from 'react-native';
 import useTheme from '../../../common/theme/use-theme';
 import { ScrollView } from 'react-native-gesture-handler';
 import GenderChoiceLlist from './components/GenderChoiceLlist';
 import CategoryChoiceList from './components/CategoryChoiceList';
 import ShopChoiceList from './components/ShopChoiceList';
+import { useQuery } from '@apollo/react-hooks';
+import { QUERY_CATEGORIES_PERSON } from '../../../graphql/queries/query-categories-person';
+import { QUERY_USER_PREFERENCE_DATA } from '../../../graphql/queries/query-user-preference-data';
 
 const GENDERS = ["Garçon", "Fillette", "Adolescent", "Adolescente", "Homme", "femme", "Vieux", "Vieille"].map((gender, id) => ({id, gender}))
 const FAMILIES = [
@@ -88,6 +91,11 @@ const SHOPS = [
         location:"Analakely"
     }
 ].map((shop, index) => ({...shop, id:`shop-${index}`}))
+const TITLES = [
+    "Vous cherchez de produit pour qui ?",
+    "Quels produits vous intéressent ?",
+    "Suivez les boutiques que vous aimez."
+]
 
 function PreferenceScreen({navigation}) {
     const { colors } = useTheme()
@@ -98,11 +106,9 @@ function PreferenceScreen({navigation}) {
         shop:[]
     })
     const [currentStep, setCurrendStep] = useState(0)
-    const TITLES = [
-        "Vous cherchez de produit pour qui ?",
-        "Quels produits vous intéressent ?",
-        "Suivez les boutiques que vous aimez."
-    ]
+    const { data, loading } = useQuery(QUERY_USER_PREFERENCE_DATA)
+
+    if(!loading) console.log(data)
     
 
     const handlePressGender = (id) => {
@@ -139,6 +145,8 @@ function PreferenceScreen({navigation}) {
         scrollView.current.scrollTo({x: 0, y: 0, animated: true})
         if(currentStep < 2)
             setCurrendStep(currentStep+1)
+        else
+            console.log(selectedChoice)
     }
 
     const handlePressPrev = () => {
@@ -173,23 +181,41 @@ function PreferenceScreen({navigation}) {
                 </Right>
             </Header>
             <Body style={{width:"100%", paddingHorizontal:20}}>
-                <ScrollView ref={scrollView} showsVerticalScrollIndicator={false}>
-                    <H1 style={styles.title}>
-                        { TITLES[currentStep] }
-                    </H1>
-                    {
-                        (currentStep === 0) &&
-                        <GenderChoiceLlist genders={GENDERS} selected={selectedChoice.gender} onPressItem={handlePressGender}/>
-                    }
-                    {
-                        (currentStep === 1) &&
-                        <CategoryChoiceList families={FAMILIES} selected={selectedChoice.category} onPressItem={handlePressCategory}/>
-                    }
-                    {
-                        (currentStep === 2) &&
-                        <ShopChoiceList shops={SHOPS} selected={selectedChoice.shop} onPressItem={handlePressShop}/>
-                    }
-                </ScrollView>
+                {
+                    (data && !loading)&&(
+                        <ScrollView ref={scrollView} showsVerticalScrollIndicator={false}>
+                            <H1 style={styles.title}>
+                                { TITLES[currentStep] }
+                            </H1>
+                            {
+                                (currentStep === 0) &&
+                                <GenderChoiceLlist 
+                                    genders={data.categoriesPerson.map(({id, name}) => ({id, gender:name}))}
+                                    selected={selectedChoice.gender} 
+                                    onPressItem={handlePressGender}
+                                />
+                            }
+                            {
+                                (currentStep === 1) &&
+                                <CategoryChoiceList 
+                                    families={data.familiesProduct} 
+                                    selected={selectedChoice.category} 
+                                    onPressItem={handlePressCategory}
+                                />
+                            }
+                            {
+                                (currentStep === 2) &&
+                                <ShopChoiceList 
+                                    shops={data.shops.map(({id,name,photoUri,pointsOfSale}) => ({
+                                        id, name, imageUri:photoUri, description:"", location:pointsOfSale[0].name
+                                    }))} 
+                                    selected={selectedChoice.shop} 
+                                    onPressItem={handlePressShop}
+                                />
+                            }
+                        </ScrollView>
+                    )
+                }
             </Body>
             <Footer>
                 <Button style={{backgroundColor:colors.primary,flex:1, height:"100%", justifyContent:"center"}} onPress={() => handlePressNext()}>

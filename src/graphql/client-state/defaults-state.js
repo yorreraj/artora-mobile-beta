@@ -1,5 +1,6 @@
 const defaultsState = {
-    theme:"light"
+    theme:"light",
+    connectedUser:null
 }
 
 export default defaultsState;

@@ -1,14 +1,13 @@
 import React, { useState } from 'react';
-import { Text, View, Item, Input, Icon, Button, H1, Container, Spinner } from 'native-base';
+import { Text, View, Button, H1, Container, Spinner } from 'native-base';
 import useTheme from '../../../common/theme/use-theme';
 import { Dimensions, ImageBackground, StatusBar, ScrollView, StyleSheet } from 'react-native';
 import bg from '../../../../assets/auth-bg.png'
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import Popover from 'react-native-popover-view';
 import { useCreateUser } from '../../../graphql/hooks/use-create-user';
+import CustomInput from './components/CustomInput';
 
 const WIDTH = Dimensions.get('window').width
-const placeHolderTextColor = "#979596"
 
 function SignUpScreen({navigation}) {
     const { colors } = useTheme()
@@ -18,9 +17,11 @@ function SignUpScreen({navigation}) {
         login:"",
         password:""
     })
-    const [ createUser, { errors, loading } ] = useCreateUser(inputValues, () => navigation.navigate('Verification'))
+    const [ createUser, { errors, removeError, loading } ] = useCreateUser(inputValues, () => navigation.navigate('Verification'))
 
     const handleChangeInput = (inputName, text) => {
+        if(Boolean(errors[inputName])) 
+            removeError(inputName)
         const newValues = {...inputValues}
         newValues[inputName] = text
         setInputValues(newValues)
@@ -36,67 +37,39 @@ function SignUpScreen({navigation}) {
                 />
                 <View style={styles.formContainer}>
                     <H1 style={{...styles.title, ...styles.colorGrey}}>S'inscrire</H1>
-                    <Item regular style={styles.itemInput} error={Boolean(errors.name)}>
-                        <Input 
-                            style={{...styles.colorGrey, fontSize:20}} 
-                            placeholder="Nom" 
-                            placeholderTextColor={placeHolderTextColor}
-                            onChangeText = { (text) => handleChangeInput('name', text) }
-                        />
-                        {
-                            (Boolean(errors.name))&&
-                            <Popover
-                                from={(
-                                    <TouchableOpacity>
-                                        <Icon type="MaterialIcons" name="error-outline"/>
-                                    </TouchableOpacity>
-                                )}
-                                backgroundStyle={{backgroundColor:"transparent"}}
-                                popoverStyle={{backgroundColor:colors.primary, paddingVertical:5, paddingRight:25}}
-                                placement="bottom"
-                            >
-                                    <View style={{flexDirection:"row", alignItems:"center"}}>
-                                        <Icon type="MaterialIcons" name="error-outline" style={{color:"white", paddingHorizontal:5, fontSize:25}}/>
-                                        <Text style={{color:"white", fontSize:16}}>
-                                            Le nom est obligatoire et il doit être en minuscule sauf le premier lettre. (Exemple: Yorre Rajaonarivelo)
-                                        </Text>
-                                    </View>
-                            </Popover>
-                        }
-                    </Item>
-                    <Item regular style={styles.itemInput} error={Boolean(errors.login)}>
-                        <Input 
-                            style={{...styles.colorGrey, fontSize:20}} 
-                            placeholder="Numéro mobile ou e-mail" 
-                            placeholderTextColor={placeHolderTextColor}
-                            onChangeText = { (text) => handleChangeInput('login', text) }
-                        />
-                        {
-                            (Boolean(errors.login))&&
-                            <Icon type="MaterialIcons" name="error-outline"/>
-                        }
-                    </Item>
-                    <Item regular style={styles.itemInput} error={Boolean(errors.password)}>
-                        <Input 
-                            style={{...styles.colorGrey, fontSize:20}} 
-                            placeholder="Mot de passe" 
-                            placeholderTextColor={placeHolderTextColor} 
-                            secureTextEntry={hidePassword}
-                            onChangeText = { (text) => handleChangeInput('password', text) }
-                        />
-                        {
-                            (Boolean(errors.password)) ? (
-                                <Icon type="MaterialIcons" name="error-outline"/>
-                            ):(
-                                <TouchableOpacity onPress={() => setHidePassword(!hidePassword)}>
-                                    <Icon active type="Feather" name={hidePassword ? "eye":"eye-off"} style={{...styles.colorGrey, ...styles.iconEye}}/>
-                                </TouchableOpacity>
-                            )
-                        }
-                    </Item>
+                    <CustomInput 
+                        inputProps={{
+                            placeholder:"Nom", 
+                            value:inputValues.name,
+                            onChangeText: text => handleChangeInput('name', text)
+                        }}
+                        errorMessage={errors.name}
+                    />
+                    <CustomInput 
+                        inputProps={{
+                            placeholder:"Numéro mobile ou e-mail", 
+                            value:inputValues.login,
+                            onChangeText: text => handleChangeInput('login', text)
+                        }}
+                        errorMessage={errors.login}
+                    />
+                    <CustomInput 
+                        inputProps={{
+                            placeholder:"Mot de passe", 
+                            value:inputValues.password,
+                            secureTextEntry:hidePassword,
+                            onChangeText: text => handleChangeInput('password', text)
+                        }}
+                        errorMessage={errors.password}
+                        iconProps={{
+                            type:"Feather",
+                            name: hidePassword ? "eye":"eye-off"
+                        }}
+                        onPressIcon={ () => setHidePassword(!hidePassword) }
+                    />
+
                     <Button
-                        style={{ ...styles.buttonRegister, backgroundColor:colors.primary}} 
-                        onPress={() => navigation.navigate('Verification')}
+                        style={{ ...styles.buttonRegister, backgroundColor:colors.primary}}
                         transparent
                         rounded
                         onPress={() => createUser()}
